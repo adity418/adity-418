@@ -1,12 +1,23 @@
-from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404
+from .models import Post
+
 
 # Create yottpResponse()ur views here.
 def starting_page(request):
-    return render(request, "blog/startingpage.html")
+    latest_posts = Post.objects.all().order_by("-date")[:3]
+    return render(request, "blog/startingpage.html", {
+        "posts": latest_posts
+    })
 
 def posts(request):
-    return render(request, "blog/all-posts.html")
+    all_posts = Post.objects.all().order_by("-date")
+    return render(request, "blog/all-posts.html", {
+        "all_posts": all_posts
+    })
 
-def post_details(request):
-    pass 
+def post_details(request, slug): 
+    identified_post = get_object_or_404(Post, slug=slug)
+    return render(request, "blog/post-detail.html", {
+        "posts": identified_post
+    })
+    
